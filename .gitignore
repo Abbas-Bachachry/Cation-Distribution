@@ -1,0 +1,6 @@
+.gitignor
+.idea/
+OutPut/*
+PTable/.idea
+__init__
+Data/Temp/*

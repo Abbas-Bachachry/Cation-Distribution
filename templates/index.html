@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Magnetic Properties Form</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Magnetic Properties Form</h1>
+        <div class="form-group">
+            <label for="elementNames">Enter Element Names (comma-separated):</label>
+            <input type="text" id="elementNames" required>
+            <button type="button" onclick="generateForm()">Generate Form</button>
+        </div>
+
+        <form id="formContainer" method="POST" action="/submit"></form>
+    </div>
+</body>
+</html>
