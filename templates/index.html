@@ -8,13 +8,17 @@
 <body>
     <div class="container">
         <h1>Magnetic Properties Form</h1>
+        <div class="tip">
+            A refers to the tetrahedral site, B refers to the octahedral site, 1 refers to divalent, and 2 refers to trivalent.
+        </div>
         <div class="form-group">
             <label for="elementNames">Enter Element Names (comma-separated):</label>
             <input type="text" id="elementNames" required>
             <button type="button" onclick="generateForm()">Generate Form</button>
         </div>
 
-        <form id="formContainer" method="POST" action="/submit"></form>
+        <form id="formContainer"></form>
+        <div id="storedDataContainer"></div>
     </div>
 </body>
 </html>

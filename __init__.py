@@ -39,6 +39,9 @@ def init(e_num, u, r, *, var: list[bool] | None = None, delta=0.01, prec=None):
     # Remove existing files in the temporary folder
     remove_files_from_temp()
 
+    if not os.path.exists('Data/Temp'):
+        pass  # todo: add Data/Temp folder creator
+
     # Write the value of delta to a file
     with open('Data/Temp/delta', 'w') as delta_file:
         delta_file.write(f'delta={delta}')

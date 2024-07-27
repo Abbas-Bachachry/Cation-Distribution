@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cation Distribution</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/output_styles.css') }}">
+</head>
+<body>
+<div class="row">
+    <div class="column">
+        <table>
+            <caption class="left_aligned_text">Cation distribution</caption>
+            <tr>
+                <th>Label</th>
+                <th>A site</th>
+                <th>B site</th>
+            </tr>
+            {% for data in output %}
+            <tr>
+                <td>{{ data.label }}</td>
+                <td>
+                    {% for site in data.SiteA %}
+                        [{{ site }}]
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for site in data.SiteB %}
+                        ({{ site }})
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="column">
+        <div class="row">theoretical a: {{ output[0].a_th }}</div>
+        <div class="row">experimental a: {{ output[0].n_B_exp }}</div>
+        <div class="row">theoretical mue: {{ output[0].n_B_th }}</div>
+        <div class="row">experimental mue: {{ output[0].n_B_exp }}</div>
+    </div>
+</div>
+</body>
+</html>

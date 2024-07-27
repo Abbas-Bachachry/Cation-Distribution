@@ -1,0 +1,41 @@
+table, th, td {
+    border: 1px solid black;
+}
+
+.left_aligned_text {
+    text-align: left;
+    font-weight: bold;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout: unset;
+    width: auto;
+    height: auto;
+}
+
+td {
+    width: auto;
+    height: auto;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.row {
+    margin-left: -5px;
+    margin-right: -5px;
+}
+
+.column {
+    float: left;
+    width: auto;
+    padding: 5px;
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}

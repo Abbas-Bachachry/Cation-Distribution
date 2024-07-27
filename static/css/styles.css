@@ -5,9 +5,9 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;  /* Align items at the start to allow vertical scroll */
+    align-items: flex-start;
     height: 100%;
-    overflow-y: auto;  /* Allow vertical scrolling */
+    overflow-y: auto;
 }
 
 .container {
@@ -24,6 +24,13 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
     color: #333333;
+}
+
+.tip {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #666666;
 }
 
 .form-group {
@@ -56,15 +63,22 @@ h1 {
     padding-bottom: 10px;
 }
 
+.form-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 5px;
+}
+
 .form-row label {
-    flex: 1 1 200px;
+    flex: 1 1 100px;
     margin: 5px 0;
 }
 
 .form-row input[type="text"],
 .form-row input[type="number"],
 .form-row input[type="checkbox"] {
-    flex: 1 1 150px;
+    flex: 1 1 80px;
     padding: 5px;
     margin: 5px;
 }
