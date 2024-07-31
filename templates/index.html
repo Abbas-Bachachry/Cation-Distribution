@@ -1,24 +1,28 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Magnetic Properties Form</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Comma Separated List Input</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Magnetic Properties Form</h1>
-        <div class="tip">
-            A refers to the tetrahedral site, B refers to the octahedral site, 1 refers to divalent, and 2 refers to trivalent.
-        </div>
+<div class="container">
+    <h1>Cation Distribution</h1><br><br>
+    <form method="post">
+        <label for="text_input" class="tip">Enter a comma-separated list:element1,content1,element2,content2,...,elementn,contentn</label>
+        <br>
+        <label for="text_input" class="tip">Example1:Co,1,Fe,2</label>
         <div class="form-group">
-            <label for="elementNames">Enter Element Names (comma-separated):</label>
-            <input type="text" id="elementNames" required>
-            <button type="button" onclick="generateForm()">Generate Form</button>
+            <input type="text" id="text_input" name="text_input" required>
+            <input type="submit" value="Submit">
         </div>
-
-        <form id="formContainer"></form>
-        <div id="storedDataContainer"></div>
-    </div>
+    </form>
+</div>
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% elif result %}
+<p>{{ result }}</p>
+{% endif %}
 </body>
 </html>

@@ -1,75 +1,54 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
-form_data_list = []
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
-@app.route('/')
+def check_input(txt_inp):
+    list_inp = txt_inp.split(',')
+    assert all(item.strip() for item in list_inp), "Please enter a comma-separated list."
+    assert all(
+        len(item.strip()) < 3 for item in list_inp[::2]), "The symbol of an element should be less than three letters."
+    assert all(is_number(item.strip()) or ("{" in item and "}" in item) for item in list_inp[1::2]), \
+        "Each element should be followed by a valid number or content in braces."
+    assert len(list_inp) % 2 == 0, "There should be an element name followed by its content."
+
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    error = None
+    if request.method == 'POST':
+        text_input = request.form['text_input']
+        try:
+            check_input(text_input)
+            result = ','.join([item.strip().capitalize() for item in text_input.split(",")])
+            return redirect(url_for('chem', results=result))
+        except AssertionError as e:
+            error = f'Invalid input. {e}'
+    return render_template("index.html", error=error)
 
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    data = request.json
-    form_data_list.append(data)
-    return jsonify({"status": "success", "message": "Data added successfully"})
+@app.route('/Chem=<results>')
+def chem(results):
+    list_inp = results.split(',')
+    n = len(list_inp) // 2
+    element_data = [{"name": list_inp[i], "content": list_inp[i + 1]} for i in range(0, len(list_inp), 2)]
+    return render_template("chem.html", n=n, element_data=element_data)
 
 
-@app.route('/recalculate', methods=['POST'])
-def recalculate():
-    index = int(request.json.get('index'))
-    data = request.json.get('data')
-    if 0 <= index < len(form_data_list):
-        form_data_list[index] = data
-        return jsonify({"status": "success", "message": "Data recalculated successfully"})
-    else:
-        return jsonify({"status": "error", "message": "Invalid index"})
-
-
-@app.route('/get_data', methods=['GET'])
-def get_data():
-    return jsonify(form_data_list)
-
-
-def create_output_object(data_list):
-    output_list = []
-    for data in data_list:
-        output = {
-            'r_A': [],  # Collect r_A values
-            'r_B': [],  # Collect r_B values
-            'a_th': None,  # Placeholder for a_th value
-            'n_B_th': None,  # Placeholder for n_B^th value
-            'n_B_exp': None,  # Placeholder for n_B^exp value
-            'SiteA': [],  # Collect SiteA values
-            'SiteB': [],  # Collect SiteB values
-            'R_O': data.get('radiiOxygen', 1.28),  # Use default if not provided
-            'the_names': [],  # Collect element names
-            'label': data.get('label', 'default_label')  # Placeholder for label
-        }
-
-        for key, value in data.items():
-            if key.startswith('radiiA'):
-                output['r_A'].append(value)
-            elif key.startswith('radiiB'):
-                output['r_B'].append(value)
-            elif key.startswith('oxidationA'):
-                output['SiteA'].append(value)
-            elif key.startswith('oxidationB'):
-                output['SiteB'].append(value)
-            elif key.startswith('elementName'):
-                output['the_names'].append(value)
-
-        output_list.append(output)
-
-    return output_list
-
-
-@app.route('/get_output', methods=['GET'])
-def get_output():
-    output = create_output_object(form_data_list)
-    return render_template('output.html', output=output)
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    # Process the form data here
+    form_data = request.form.to_dict()
+    # Perform calculations or further processing
+    return jsonify(form_data)
 
 
 if __name__ == '__main__':

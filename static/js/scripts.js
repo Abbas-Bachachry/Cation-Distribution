@@ -23,27 +23,27 @@ function generateForm() {
             </div>
 
             <div class="form-column">
-                <label>Oxidation State A1: <input type="checkbox" name="oxidationA${i}_1"></label>
-                <label>Magnetic Moment A1: <input type="number" name="magneticMomentA${i}_1" step="0.01"></label>
-                <label>Radii A1: <input type="number" name="radiiA${i}_1" step="0.01"></label>
+                <label>Oxidation State A1: <input type="checkbox" name="oxidationA${i}_1" checked onchange="toggleColumn(this, 'A${i}1')"></label>
+                <label>Magnetic Moment A1: <input type="number" name="A${i}1magneticMoment" step="0.01"></label>
+                <label>Radii A1: <input type="number" name="A${i}1radii" step="0.01"></label>
             </div>
 
             <div class="form-column">
-                <label>Oxidation State A2: <input type="checkbox" name="oxidationA${i}_2"></label>
-                <label>Magnetic Moment A2: <input type="number" name="magneticMomentA${i}_2" step="0.01"></label>
-                <label>Radii A2: <input type="number" name="radiiA${i}_2" step="0.01"></label>
+                <label>Oxidation State A2: <input type="checkbox" name="oxidationA${i}_2" checked onchange="toggleColumn(this, 'A${i}2')"></label>
+                <label>Magnetic Moment A2: <input type="number" name="A${i}2magneticMoment" step="0.01"></label>
+                <label>Radii A2: <input type="number" name="A${i}2radii" step="0.01"></label>
             </div>
 
             <div class="form-column">
-                <label>Oxidation State B1: <input type="checkbox" name="oxidationB${i}_1"></label>
-                <label>Magnetic Moment B1: <input type="number" name="magneticMomentB${i}_1" step="0.01"></label>
-                <label>Radii B1: <input type="number" name="radiiB${i}_1" step="0.01"></label>
+                <label>Oxidation State B1: <input type="checkbox" name="oxidationB${i}_1" checked onchange="toggleColumn(this, 'B${i}1')"></label>
+                <label>Magnetic Moment B1: <input type="number" name="B${i}1magneticMoment" step="0.01"></label>
+                <label>Radii B1: <input type="number" name="B${i}1radii" step="0.01"></label>
             </div>
 
             <div class="form-column">
-                <label>Oxidation State B2: <input type="checkbox" name="oxidationB${i}_2"></label>
-                <label>Magnetic Moment B2: <input type="number" name="magneticMomentB${i}_2" step="0.01"></label>
-                <label>Radii B2: <input type="number" name="radiiB${i}_2" step="0.01"></label>
+                <label>Oxidation State B2: <input type="checkbox" name="oxidationB${i}_2" checked onchange="toggleColumn(this, 'B${i}2')"></label>
+                <label>Magnetic Moment B2: <input type="number" name="B${i}2magneticMoment" step="0.01"></label>
+                <label>Radii B2: <input type="number" name="B${i}2radii" step="0.01"></label>
             </div>
         `;
         container.appendChild(elementDiv);
@@ -54,7 +54,7 @@ function generateForm() {
     additionalFields.innerHTML = `
         <label>Saturation Magnetization: <input type="number" name="saturationMagnetization" step="0.01"></label>
         <label>Lattice Constant: <input type="number" name="latticeConstant" step="0.01"></label>
-        <label>Initial Gauss: ${Array.from({ length: 4 * n }, (_, j) => `<input type="number" name="initialGauss${j}" step="0.01">`).join('')}</label>
+        <label>Initial Gauss: ${Array.from({length: 4 * n}, (_, j) => `<input type="number" name="initialGauss${j}" step="0.01">`).join('')}</label>
         <label>Radii of Oxygen (default = 1.28 Å): <input type="number" name="radiiOxygen" value="1.28" step="0.01"></label>
     `;
     container.appendChild(additionalFields);
@@ -66,6 +66,21 @@ function generateForm() {
         <button type="button" onclick="recalculateData()">Recalculate</button>
     `;
     container.appendChild(buttonsDiv);
+}
+
+function toggleColumn(checkbox, columnName) {
+    const inputs = document.querySelectorAll(`input[name^="${columnName}"]`);
+    if (checkbox.checked) {
+        inputs.forEach(input => {
+            input.removeAttribute('disabled');
+            input.value = '';
+        });
+    } else {
+        inputs.forEach(input => {
+            input.value = 0;
+            input.setAttribute('disabled', 'true');
+        });
+    }
 }
 
 function addData() {
@@ -83,15 +98,15 @@ function addData() {
         },
         body: JSON.stringify(dataObj),
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            formDataList.push(dataObj);
-            updateStoredData();
-        } else {
-            alert(data.message);
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                formDataList.push(dataObj);
+                updateStoredData();
+            } else {
+                alert(data.message);
+            }
+        });
 }
 
 function recalculateData() {
@@ -113,17 +128,17 @@ function recalculateData() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ index, data: dataObj }),
+        body: JSON.stringify({index, data: dataObj}),
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            formDataList[Number(index)] = dataObj;
-            updateStoredData();
-        } else {
-            alert(data.message);
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                formDataList[Number(index)] = dataObj;
+                updateStoredData();
+            } else {
+                alert(data.message);
+            }
+        });
 }
 
 function updateStoredData() {
