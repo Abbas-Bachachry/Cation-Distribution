@@ -1,5 +1,5 @@
 import numpy as np
-import __init__ as f
+import init
 from write.html import table, tables
 from PTable import look_for
 
@@ -26,8 +26,8 @@ guss = [
     0, .4, 1, 0, 0, .6
 ]
 
-f.init(3, u, r, var=var, delta=0.001)
-c1 = f.cation_distribution([1.4, 1, 0.6], ['Fe', 'Co', 'Cr'], u, r, var=var)
+init.init(3, u, r, var=var, delta=0.001)
+c1 = init.cation_distribution([1.4, 1, 0.6], ['Fe', 'Co', 'Cr'], u, r, var=var)
 c1.initiate_simulation(guss)
 c1.Ro = 1.37
 cd_tables = []

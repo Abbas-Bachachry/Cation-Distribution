@@ -7,10 +7,22 @@
     <title>Comma Separated List Input</title>
 </head>
 <body>
+<div class="container" id="storedDataContainer">
+    <h2>Stored Data</h2>
+    {% if cd_list %}
+    {% for data in cd_list %}
+    <div class="form-row">
+        <label><b>{{data.label|safe}}</b></label>
+        {{data}}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
 <div class="container">
     <h1>Cation Distribution</h1><br><br>
     <form method="post">
-        <label for="text_input" class="tip">Enter a comma-separated list:element1,content1,element2,content2,...,elementn,contentn</label>
+        <label for="text_input" class="tip">Enter a comma-separated
+            list:element1,content1,element2,content2,...,elementn,contentn</label>
         <br>
         <label for="text_input" class="tip">Example1:Co,1,Fe,2</label>
         <div class="form-group">
@@ -21,8 +33,6 @@
 </div>
 {% if error %}
 <p style="color: red;">{{ error }}</p>
-{% elif result %}
-<p>{{ result }}</p>
 {% endif %}
 </body>
 </html>

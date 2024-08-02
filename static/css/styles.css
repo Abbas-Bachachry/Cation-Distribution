@@ -97,6 +97,29 @@ h1 {
     background-color: #0056b3;
 }
 
+.input-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.input-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 5px;
+}
+
+.label-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-right: -14%;
+    margin-top: 5px;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .form-group,

@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <h1>Chemical Form</h1>
-    <form method="POST" action="/calculate">
+    <form method="POST" action="/calculate" onsubmit="enableDisabledInputs()">
         {% for i in range(n) %}
         <div class="form-row">
             <div class="form-column">
@@ -19,7 +19,8 @@
                 </label>
                 <label>
                     <span>Content:</span>
-                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}" step="0.01" required>
+                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}"
+                           step="0.01" required>
                 </label>
                 <label>
                     <span>Molecular Weight:</span>
@@ -71,7 +72,7 @@
             <div class="form-column">
                 <label>
                     <span>Oxidation State B2:</span>
-                    <input type="checkbox" name="B{{i}}2oxidation" checked onchange="toggleColumn(this, 'B{{i}}2')">
+                    <input type="checkbox" name="oxidationB{{ i }}_2" checked onchange="toggleColumn(this, 'B{{i}}2')">
                 </label>
                 <label>
                     <span>Magnetic Moment B2:</span>
@@ -95,9 +96,26 @@
             </label>
             <label>
                 <span>Initial Gauss:</span>
-                {% for j in range(4 * n) %}
-                <input type="number" name="initialGauss{{ j }}" step="0.01">
-                {% endfor %}
+                <div class="input-row">
+                    <div class="label-column">
+                        <br>
+                        <label>A:</label>
+                        <label>B:</label>
+                    </div>
+                    {% for j in range(2 * n) %}
+                    <div class="input-column">
+                        <label>{{element_data[j//2]['name']}}
+                            {%if j%2%}
+                            3+
+                            {%else%}
+                            2+
+                            {%endif%}
+                        </label>
+                        <input type="number" name="initialGauss{{ 2*j }}" step="0.01">
+                        <input type="number" name="initialGauss{{ 2*j+1 }}" step="0.01">
+                    </div>
+                    {% endfor %}
+                </div>
             </label>
             <label>
                 <span>Radii of Oxygen (default = 1.28 Å):</span>
