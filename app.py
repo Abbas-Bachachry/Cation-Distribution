@@ -1,15 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+import sqlite3
+
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 # from celery import Celery
 import threading
 
-import init
+# import init
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'SECRET'
 # app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 # celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 # celery.conf.update(app.config)
 
 cd_list = []
+
+
+def get_gauss(form, n):
+    gauss = []
+    for i in range(4 * n):
+        try:
+            gauss.append(float(form[f'initialGauss{i}']))
+        except ValueError:
+            return
+    return gauss
 
 
 def get_data(form):
@@ -19,7 +32,8 @@ def get_data(form):
         'content': [],
         'mue': [],
         'radii': [],
-        'sites_perf': []
+        'sites_perf': [],
+        'gauss': None
     }
     i = 0
     while True:
@@ -42,20 +56,22 @@ def get_data(form):
         except KeyError as e:
             print(e)
             break
+
+    data['gauss'] = get_gauss(form, i - 1)
     label = ''
     for name, content in zip(data['names'], data['content']):
         label += f'{name}<sub>{content}</sub>'
-    data['label'] = label
+    data['label'] = label + 'O<sub>4</sub>'
     return data
 
 
 # @celery.task
 def calculate_cd(data):
     global cd_list
-    init.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
+    # init.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
     # cd = init.cation_distribution(data['content'], data['names'], data['mue'], data['radii'], var=data['sites_perf'])
-    # cd.initiate_simulation()
-    # cd_list.append(cd)
+    # cd.initiate_simulation(data['gauss'])
+    cd_list.append(data)
     print(data)
     return data
 
@@ -78,9 +94,44 @@ def check_input(txt_inp):
     assert len(list_inp) % 2 == 0, "There should be an element name followed by its content."
 
 
+DATABASE = 'elements.db'
+
+
+def get_element_data(element_names):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    element_data = {}
+    for name in element_names:
+        cursor.execute("SELECT * FROM elements WHERE name=?", (name,))
+        row = cursor.fetchone()
+        if row:
+            element_data = {  # todo: remove the unnecessary data
+                'name': row[0],
+                'content': row[1],
+                'molecular_weight': row[2],
+                'oxidation_state_a1': row[3],
+                'magnetic_moment_a1': row[4],
+                'radii_a1': row[5],
+                'oxidation_state_a2': row[6],
+                'magnetic_moment_a2': row[7],
+                'radii_a2': row[8],
+                'oxidation_state_b1': row[9],
+                'magnetic_moment_b1': row[10],
+                'radii_b1': row[11],
+                'oxidation_state_b2': row[12],
+                'magnetic_moment_b2': row[13],
+                'radii_b2': row[14]
+            }
+        else:
+            flash(f"No data found for element {name}", "error")
+            element_data = {'name': name}
+    conn.close()
+    return element_data
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    error = None
+    error = ''
     if request.method == 'POST':
         text_input = request.form['text_input']
         try:
@@ -97,7 +148,8 @@ def index():
 def chem(results):
     list_inp = results.split(',')
     n = len(list_inp) // 2
-    element_data = [{"name": list_inp[i], "content": list_inp[i + 1]} for i in range(0, len(list_inp), 2)]
+    element_data = [{"content": list_inp[i + 1]}.update(get_element_data(list_inp[i])) for i in
+                    range(0, len(list_inp), 2)]
     return render_template("chem.html", n=n, element_data=element_data)
 
 
@@ -110,7 +162,7 @@ def calculate():
     form_data['data'] = data
     thread.start()
     # Perform calculations or further processing
-    return redirect(url_for('index')), 202
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

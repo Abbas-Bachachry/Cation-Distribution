@@ -22,34 +22,15 @@ function enableDisabledInputs() {
     })
 }
 
-// function recalculateData() {
-//     const index = prompt("Enter the index of the data to recalculate (starting from 0):");
-//     if (index === null || isNaN(index) || index < 0 || index >= formDataList.length) {
-//         alert("Invalid index.");
-//         return;
-//     }
-//
-//     const form = document.getElementById('formContainer');
-//     const formData = new FormData(form);
-//     const dataObj = {};
-//     formData.forEach((value, key) => {
-//         dataObj[key] = value;
-//     });
-//
-//     fetch('/recalculate', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({index, data: dataObj}),
-//     })
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.status === 'success') {
-//                 formDataList[Number(index)] = dataObj;
-//                 updateStoredData();
-//             } else {
-//                 alert(data.message);
-//             }
-//         });
-// }
+function validateForm() {
+    const saturationMagnetization = document.getElementById('saturationMagnetization').value;
+    const latticeConstant = document.getElementById('latticeConstant').value;
+
+    if (!saturationMagnetization && !latticeConstant) {
+        alert('Either Saturation Magnetization or Lattice Constant must be filled.');
+        return false;
+    }
+
+    enableDisabledInputs();
+    return true;
+}

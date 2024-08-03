@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <h1>Chemical Form</h1>
-    <form method="POST" action="/calculate" onsubmit="enableDisabledInputs()">
+    <form method="POST" action="/calculate" onsubmit="return validateForm()">
         {% for i in range(n) %}
         <div class="form-row">
             <div class="form-column">
@@ -19,8 +19,7 @@
                 </label>
                 <label>
                     <span>Content:</span>
-                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}"
-                           step="0.01" required>
+                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}" step="0.01" required>
                 </label>
                 <label>
                     <span>Molecular Weight:</span>
@@ -88,11 +87,11 @@
         <div class="form-column">
             <label>
                 <span>Saturation Magnetization:</span>
-                <input type="number" name="saturationMagnetization" step="0.01">
+                <input type="number" id="saturationMagnetization" name="saturationMagnetization" step="0.01">
             </label>
             <label>
                 <span>Lattice Constant:</span>
-                <input type="number" name="latticeConstant" step="0.01">
+                <input type="number" id="latticeConstant" name="latticeConstant" step="0.01">
             </label>
             <label>
                 <span>Initial Gauss:</span>
