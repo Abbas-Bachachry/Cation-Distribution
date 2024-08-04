@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Element Form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Element Form</h1>
+    <form method="POST" action="/submit">
+        <div class="form-row">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-row">
+            <label for="molecular_weight">Molecular Weight:</label>
+            <input type="number" id="molecular_weight" name="molecular_weight" step="0.001" required>
+        </div>
+        <div class="form-row">
+            <label for="oxidation_state_a1">Oxidation State A1:</label>
+            <input type="checkbox" id="oxidation_state_a1" name="oxidation_state_a1">
+            <label for="magnetic_moment_a1">Magnetic Moment A1:</label>
+            <input type="number" id="magnetic_moment_a1" name="magnetic_moment_a1" step="0.001">
+            <label for="radii_a1">Radii A1:</label>
+            <input type="number" id="radii_a1" name="radii_a1" step="0.001">
+        </div>
+        <div class="form-row">
+            <label for="oxidation_state_a2">Oxidation State A2:</label>
+            <input type="checkbox" id="oxidation_state_a2" name="oxidation_state_a2">
+            <label for="magnetic_moment_a2">Magnetic Moment A2:</label>
+            <input type="number" id="magnetic_moment_a2" name="magnetic_moment_a2" step="0.001">
+            <label for="radii_a2">Radii A2:</label>
+            <input type="number" id="radii_a2" name="radii_a2" step="0.001">
+        </div>
+        <div class="form-row">
+            <label for="oxidation_state_b1">Oxidation State B1:</label>
+            <input type="checkbox" id="oxidation_state_b1" name="oxidation_state_b1">
+            <label for="magnetic_moment_b1">Magnetic Moment B1:</label>
+            <input type="number" id="magnetic_moment_b1" name="magnetic_moment_b1" step="0.001">
+            <label for="radii_b1">Radii B1:</label>
+            <input type="number" id="radii_b1" name="radii_b1" step="0.001">
+        </div>
+        <div class="form-row">
+            <label for="oxidation_state_b2">Oxidation State B2:</label>
+            <input type="checkbox" id="oxidation_state_b2" name="oxidation_state_b2">
+            <label for="magnetic_moment_b2">Magnetic Moment B2:</label>
+            <input type="number" id="magnetic_moment_b2" name="magnetic_moment_b2" step="0.001">
+            <label for="radii_b2">Radii B2:</label>
+            <input type="number" id="radii_b2" name="radii_b2" step="0.001">
+        </div>
+        <div class="form-row">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</div>
+</body>
+</html>

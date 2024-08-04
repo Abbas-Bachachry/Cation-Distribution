@@ -19,67 +19,92 @@
                 </label>
                 <label>
                     <span>Content:</span>
-                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}" step="0.01" required>
+                    <input type="number" name="elementContent{{ i }}" value="{{ element_data[i]['content'] }}"
+                           step="0.001" required>
                 </label>
                 <label>
                     <span>Molecular Weight:</span>
-                    <input type="number" name="molecularWeight{{ i }}" step="0.01" required>
+                    <input type="number" name="molecularWeight{{ i }}" value="{{ element_data[i]['molecular_weight'] }}"
+                           step="0.001" required>
                 </label>
             </div>
             <div class="form-column">
                 <label>
                     <span>Oxidation State A1:</span>
-                    <input type="checkbox" name="oxidationA{{ i }}_1" checked onchange="toggleColumn(this, 'A{{i}}1')">
+                    <input type="checkbox" name="oxidationA{{ i }}_1"
+                           {% if element_data[i]['oxidation_state_a1'] %}
+                    checked
+                    {% endif %}
+                    onchange="toggleColumn(this, 'A{{i}}1')" >
                 </label>
                 <label>
                     <span>Magnetic Moment A1:</span>
-                    <input type="number" name="A{{i}}1magneticMoment" step="0.01">
+                    <input type="number" name="A{{i}}1magneticMoment"
+                           value="{{ element_data[i]['magnetic_moment_a1'] }}" step="0.01" required>
                 </label>
                 <label>
                     <span>Radii A1:</span>
-                    <input type="number" name="A{{i}}1radii" step="0.01">
+                    <input type="number" name="A{{i}}1radii" value="{{ element_data[i]['radii_a1'] }}" step="0.001" required>
                 </label>
             </div>
             <div class="form-column">
                 <label>
                     <span>Oxidation State A2:</span>
-                    <input type="checkbox" name="oxidationA{{ i }}_2" checked onchange="toggleColumn(this, 'A{{i}}2')">
+                    <input type="checkbox" name="oxidationA{{ i }}_2"
+                           {% if element_data[i]['oxidation_state_a2'] %}
+                    checked
+                    {% endif %}
+                    onchange="toggleColumn(this, 'A{{i}}2')">
                 </label>
                 <label>
                     <span>Magnetic Moment A2:</span>
-                    <input type="number" name="A{{i}}2magneticMoment" step="0.01">
+                    <input type="number" name="A{{i}}2magneticMoment"
+                           value="{{ element_data[i]['magnetic_moment_a2'] }}" step="0.01" required>
                 </label>
                 <label>
                     <span>Radii A2:</span>
-                    <input type="number" name="A{{i}}2radii" step="0.01">
+                    <input type="number" name="A{{i}}2radii" value="{{ element_data[i]['radii_a2'] }}" step="0.001"
+                           required>
                 </label>
             </div>
             <div class="form-column">
                 <label>
                     <span>Oxidation State B1:</span>
-                    <input type="checkbox" name="oxidationB{{ i }}_1" checked onchange="toggleColumn(this, 'B{{i}}1')">
+                    <input type="checkbox" name="oxidationB{{ i }}_1"
+                           {% if element_data[i]['oxidation_state_b1'] %}
+                    checked
+                    {% endif %}
+                    onchange="toggleColumn(this, 'B{{i}}1')">
                 </label>
                 <label>
                     <span>Magnetic Moment B1:</span>
-                    <input type="number" name="B{{i}}1magneticMoment" step="0.01">
+                    <input type="number" name="B{{i}}1magneticMoment"
+                           value="{{ element_data[i]['magnetic_moment_b1'] }}" step="0.01" required>
                 </label>
                 <label>
                     <span>Radii B1:</span>
-                    <input type="number" name="B{{i}}1radii" step="0.01">
+                    <input type="number" name="B{{i}}1radii" value="{{ element_data[i]['radii_b1'] }}" step="0.001"
+                           required>
                 </label>
             </div>
             <div class="form-column">
                 <label>
                     <span>Oxidation State B2:</span>
-                    <input type="checkbox" name="oxidationB{{ i }}_2" checked onchange="toggleColumn(this, 'B{{i}}2')">
+                    <input type="checkbox" name="oxidationB{{ i }}_2"
+                           {% if element_data[i]['oxidation_state_b2'] %}
+                    checked
+                    {% endif %}
+                    onchange="toggleColumn(this, 'B{{i}}2')">
                 </label>
                 <label>
                     <span>Magnetic Moment B2:</span>
-                    <input type="number" name="B{{i}}2magneticMoment" step="0.01">
+                    <input type="number" name="B{{i}}2magneticMoment"
+                           value="{{ element_data[i]['magnetic_moment_b2'] }}" step="0.01" required>
                 </label>
                 <label>
                     <span>Radii B2:</span>
-                    <input type="number" name="B{{i}}2radii" step="0.01">
+                    <input type="number" name="B{{i}}2radii" value="{{ element_data[i]['radii_b2'] }}" step="0.001"
+                           required>
                 </label>
             </div>
         </div>

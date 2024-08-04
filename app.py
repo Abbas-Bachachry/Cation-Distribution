@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, f
 # from celery import Celery
 import threading
 
-# import init
+# import main
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SECRET'
@@ -68,7 +68,7 @@ def get_data(form):
 # @celery.task
 def calculate_cd(data):
     global cd_list
-    # init.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
+    # main.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
     # cd = init.cation_distribution(data['content'], data['names'], data['mue'], data['radii'], var=data['sites_perf'])
     # cd.initiate_simulation(data['gauss'])
     cd_list.append(data)
@@ -97,34 +97,32 @@ def check_input(txt_inp):
 DATABASE = 'elements.db'
 
 
-def get_element_data(element_names):
+def get_element_data(name):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    element_data = {}
-    for name in element_names:
-        cursor.execute("SELECT * FROM elements WHERE name=?", (name,))
-        row = cursor.fetchone()
-        if row:
-            element_data = {  # todo: remove the unnecessary data
-                'name': row[0],
-                'content': row[1],
-                'molecular_weight': row[2],
-                'oxidation_state_a1': row[3],
-                'magnetic_moment_a1': row[4],
-                'radii_a1': row[5],
-                'oxidation_state_a2': row[6],
-                'magnetic_moment_a2': row[7],
-                'radii_a2': row[8],
-                'oxidation_state_b1': row[9],
-                'magnetic_moment_b1': row[10],
-                'radii_b1': row[11],
-                'oxidation_state_b2': row[12],
-                'magnetic_moment_b2': row[13],
-                'radii_b2': row[14]
-            }
-        else:
-            flash(f"No data found for element {name}", "error")
-            element_data = {'name': name}
+    cursor.execute("SELECT * FROM elements WHERE name=?", (name,))
+    row = cursor.fetchone()
+    print(row)
+    if row:
+        element_data = {
+            'name': row[0],
+            'molecular_weight': row[1],
+            'oxidation_state_a1': row[2],
+            'magnetic_moment_a1': row[3],
+            'radii_a1': row[4],
+            'oxidation_state_a2': row[5],
+            'magnetic_moment_a2': row[6],
+            'radii_a2': row[7],
+            'oxidation_state_b1': row[8],
+            'magnetic_moment_b1': row[9],
+            'radii_b1': row[10],
+            'oxidation_state_b2': row[11],
+            'magnetic_moment_b2': row[12],
+            'radii_b2': row[13]
+        }
+    else:
+        flash(f"No data found for element {name}", "error")
+        element_data = {'name': name}
     conn.close()
     return element_data
 
@@ -148,8 +146,11 @@ def index():
 def chem(results):
     list_inp = results.split(',')
     n = len(list_inp) // 2
-    element_data = [{"content": list_inp[i + 1]}.update(get_element_data(list_inp[i])) for i in
-                    range(0, len(list_inp), 2)]
+    element_data = []
+    for i in range(0, len(list_inp), 2):
+        element_data.append({"content": list_inp[i + 1]})
+        element_data[-1].update(get_element_data(list_inp[i]))
+    print("element_data", element_data)
     return render_template("chem.html", n=n, element_data=element_data)
 
 
@@ -166,4 +167,5 @@ def calculate():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #todo:do cd calculation
+    app.run(debug=True, port=4000)
