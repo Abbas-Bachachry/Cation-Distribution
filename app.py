@@ -1,8 +1,8 @@
 import sqlite3
-
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 # from celery import Celery
 import threading
+import main
 
 # import main
 
@@ -15,14 +15,15 @@ app.config['SECRET_KEY'] = 'SECRET'
 cd_list = []
 
 
-def get_gauss(form, n):
-    gauss = []
+def get_guess(form, n):
+    guess = []
     for i in range(4 * n):
         try:
-            gauss.append(float(form[f'initialGauss{i}']))
+            guess.append(float(form[f'initialGuess{i}']))
         except ValueError:
             return
-    return gauss
+
+    return guess
 
 
 def get_data(form):
@@ -33,7 +34,7 @@ def get_data(form):
         'mue': [],
         'radii': [],
         'sites_perf': [],
-        'gauss': None
+        'guess': None
     }
     i = 0
     while True:
@@ -44,20 +45,20 @@ def get_data(form):
             data['sites_perf'].append(f'oxidationA{i}_2' in form)
             data['sites_perf'].append(f'oxidationB{i}_1' in form)
             data['sites_perf'].append(f'oxidationB{i}_2' in form)
-            data['mue'].append(form[f'A{i}1magneticMoment'])
-            data['mue'].append(form[f'A{i}2magneticMoment'])
-            data['mue'].append(form[f'B{i}1magneticMoment'])
-            data['mue'].append(form[f'B{i}2magneticMoment'])
-            data['radii'].append(form[f'A{i}1radii'])
-            data['radii'].append(form[f'A{i}2radii'])
-            data['radii'].append(form[f'B{i}1radii'])
-            data['radii'].append(form[f'B{i}2radii'])
+            data['mue'].append(float(form[f'A{i}1magneticMoment']))
+            data['mue'].append(float(form[f'A{i}2magneticMoment']))
+            data['mue'].append(float(form[f'B{i}1magneticMoment']))
+            data['mue'].append(float(form[f'B{i}2magneticMoment']))
+            data['radii'].append(float(form[f'A{i}1radii']))
+            data['radii'].append(float(form[f'A{i}2radii']))
+            data['radii'].append(float(form[f'B{i}1radii']))
+            data['radii'].append(float(form[f'B{i}2radii']))
             i += 1
         except KeyError as e:
             print(e)
             break
 
-    data['gauss'] = get_gauss(form, i - 1)
+    data['guess'] = get_guess(form, i)
     label = ''
     for name, content in zip(data['names'], data['content']):
         label += f'{name}<sub>{content}</sub>'
@@ -68,12 +69,12 @@ def get_data(form):
 # @celery.task
 def calculate_cd(data):
     global cd_list
-    # main.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
-    # cd = init.cation_distribution(data['content'], data['names'], data['mue'], data['radii'], var=data['sites_perf'])
-    # cd.initiate_simulation(data['gauss'])
-    cd_list.append(data)
-    print(data)
-    return data
+    main.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
+    cd = main.cation_distribution(data['content'], data['names'], data['mue'], data['radii'], var=data['sites_perf'])
+    cd.initiate_simulation(data['guess'])
+    print(cd)
+    cd_list.append(cd)
+    return cd
 
 
 def is_number(s):
@@ -102,7 +103,6 @@ def get_element_data(name):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM elements WHERE name=?", (name,))
     row = cursor.fetchone()
-    print(row)
     if row:
         element_data = {
             'name': row[0],
@@ -138,7 +138,8 @@ def index():
             return redirect(url_for('chem', results=result))
         except AssertionError as e:
             error = f'Invalid input. {e}'
-    print(len(cd_list))
+    if cd_list:
+        print(cd_list)
     return render_template("index.html", error=error, cd_list=cd_list)
 
 
@@ -150,7 +151,7 @@ def chem(results):
     for i in range(0, len(list_inp), 2):
         element_data.append({"content": list_inp[i + 1]})
         element_data[-1].update(get_element_data(list_inp[i]))
-    print("element_data", element_data)
+
     return render_template("chem.html", n=n, element_data=element_data)
 
 
@@ -168,4 +169,4 @@ def calculate():
 
 if __name__ == '__main__':
     #todo:do cd calculation
-    app.run(debug=True, port=4000)
+    app.run(debug=True)

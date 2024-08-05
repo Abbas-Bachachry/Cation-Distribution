@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Element List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/database.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Elements</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Molecular Weight</th>
+            <th>Actions</th>
+        </tr>
+        {% for element in elements %}
+        <tr>
+            <td>{{ element['name'] }}</td>
+            <td>{{ element['molecular_weight'] }}</td>
+            <td><a href="{{ url_for('edit', name=element['name']) }}">Edit</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="{{ url_for('add') }}">Add New Element</a>
+</div>
+</body>
+</html>

@@ -44,7 +44,8 @@
                 </label>
                 <label>
                     <span>Radii A1:</span>
-                    <input type="number" name="A{{i}}1radii" value="{{ element_data[i]['radii_a1'] }}" step="0.001" required>
+                    <input type="number" name="A{{i}}1radii" value="{{ element_data[i]['radii_a1'] }}" step="0.001"
+                           required>
                 </label>
             </div>
             <div class="form-column">
@@ -119,7 +120,7 @@
                 <input type="number" id="latticeConstant" name="latticeConstant" step="0.01">
             </label>
             <label>
-                <span>Initial Gauss:</span>
+                <span>Initial guess:</span>
                 <div class="input-row">
                     <div class="label-column">
                         <br>
@@ -135,8 +136,8 @@
                             2+
                             {%endif%}
                         </label>
-                        <input type="number" name="initialGauss{{ 2*j }}" step="0.01">
-                        <input type="number" name="initialGauss{{ 2*j+1 }}" step="0.01">
+                        <input type="number" name="initialGuess{{j }}" step="0.01">
+                        <input type="number" name="initialGuess{{j+2*n }}" step="0.01">
                     </div>
                     {% endfor %}
                 </div>

@@ -1,8 +1,5 @@
 import os.path
-try:
-    from .functions import *
-except ImportError:
-    from functions import *
+from functions import *
 
 
 class CDResults:
@@ -84,7 +81,7 @@ class CD:
                   f"{self}"
         return massage
 
-    def __initial_distribution__(self):
+    def __initial_distribution__(self):  # fixme
         self.cations_content[:] = 0
         self.a_capacity = 1
         self.b_capacity = 2

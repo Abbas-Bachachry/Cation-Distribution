@@ -1,7 +1,6 @@
 import numpy as np
 import main
 from write.html import table, tables
-from PTable import look_for
 
 #      Fe2+  Fe3+  Co2+  Co3+   Cr2+  Cr3+
 var = [True, True, True, False, False, False,  # a
@@ -62,4 +61,3 @@ for T, ms in CoCr6_sat_mag.items():
 
 r = tables(cd_tables, filename='CoCr6', overwrite=True)
 
-print(look_for('co'))
