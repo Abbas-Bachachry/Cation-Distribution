@@ -1,5 +1,8 @@
+import time
 import sqlite3
+import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask_socketio import SocketIO, emit
 # from celery import Celery
 import threading
 import main
@@ -11,6 +14,8 @@ app.config['SECRET_KEY'] = 'SECRET'
 # app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 # celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 # celery.conf.update(app.config)
+
+socketio = SocketIO(app, async_mode='threading')
 
 cd_list = []
 
@@ -26,21 +31,40 @@ def get_guess(form, n):
     return guess
 
 
+def rearrange_data(data):
+    n = len(data['names'])
+    index_list = []
+    for i in range(n):
+        index_list.extend([4 * i, 4 * i + 1])
+    for i in range(n):
+        index_list.extend([4 * i + 2, 4 * i + 3])
+
+    data['sites_perf'] = np.array(data['sites_perf'], dtype=bool)[index_list].tolist()
+    data['mue'] = np.array(data['mue'])[index_list].tolist()
+    data['radii'] = np.array(data['radii'])[index_list].tolist()
+
+    return data
+
+
 def get_data(form):
     data = {
         'label': f'{len(cd_list)}',
         'names': [],
         'content': [],
+        'weight': [],
         'mue': [],
         'radii': [],
         'sites_perf': [],
-        'guess': None
+        'guess': None,
+        'a_exp': None,
+        'm_exp': None,
     }
     i = 0
     while True:
         try:
             data['names'].append(form[f'elementName{i}'])
             data['content'].append(float(form[f'elementContent{i}']))
+            data['weight'].append(float(form[f'atomicWeight{i}']))
             data['sites_perf'].append(f'oxidationA{i}_1' in form)
             data['sites_perf'].append(f'oxidationA{i}_2' in form)
             data['sites_perf'].append(f'oxidationB{i}_1' in form)
@@ -53,9 +77,13 @@ def get_data(form):
             data['radii'].append(float(form[f'A{i}2radii']))
             data['radii'].append(float(form[f'B{i}1radii']))
             data['radii'].append(float(form[f'B{i}2radii']))
+            if form['saturationMagnetization']:
+                data['m_exp'] = float(form['saturationMagnetization'])
+            if form['latticeConstant']:
+                data['m_exp'] = float(form['latticeConstant'])
             i += 1
         except KeyError as e:
-            print(e)
+            # print(e)
             break
 
     data['guess'] = get_guess(form, i)
@@ -63,17 +91,32 @@ def get_data(form):
     for name, content in zip(data['names'], data['content']):
         label += f'{name}<sub>{content}</sub>'
     data['label'] = label + 'O<sub>4</sub>'
-    return data
+    return rearrange_data(data)
 
 
 # @celery.task
 def calculate_cd(data):
     global cd_list
+    time.sleep(10)  # pause for 10 seconds
     main.init(len(data['names']), data['mue'], data['radii'], var=data['sites_perf'], delta=0.001)
     cd = main.cation_distribution(data['content'], data['names'], data['mue'], data['radii'], var=data['sites_perf'])
     cd.initiate_simulation(data['guess'])
-    print(cd)
-    cd_list.append(cd)
+    cd_list.append({
+        'site_a': cd.cations_content[np.where(cd.a)[0]].tolist(),
+        'site_b': cd.cations_content[np.where(cd.b)[0]].tolist(),
+        'e_name': cd.name.tolist(),
+        'label': data['label'],
+        'name': data['label'],
+        'a_th': cd.calculate_a_th(),
+        'a_exp': data['a_exp'],
+        'mue_exp': cd.calculate_magnetic_moment(data['m_exp'], data['weight']),
+        'mue_th': cd.calculate_mue(),
+        'R_O': cd.Ro
+    })
+    message = "The calculation is complete. Reload the page to see the results."
+    print(f"Emitting event 'task_done' with message: {message}")  # Debugging line
+    socketio.emit("task_done", {"message": message})
+    print("task_done event emitted")  # Debugging line
     return cd
 
 
@@ -138,9 +181,8 @@ def index():
             return redirect(url_for('chem', results=result))
         except AssertionError as e:
             error = f'Invalid input. {e}'
-    if cd_list:
-        print(cd_list)
-    return render_template("index.html", error=error, cd_list=cd_list)
+    enumerated_cd_list = list(enumerate(cd_list))
+    return render_template("index.html", error=error, enumerated_cd_list=enumerated_cd_list)
 
 
 @app.route('/Chem=<results>')
@@ -157,6 +199,7 @@ def chem(results):
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
+    print('start')
     # Process the form data here
     form_data = request.form.to_dict()
     data = get_data(form_data)
@@ -167,6 +210,15 @@ def calculate():
     return redirect(url_for('index'))
 
 
+@app.route('/output/<i>')
+def output(i):
+    try:
+        cd = cd_list[int(i)]
+    except Exception as err:
+        return f'<h1>Error: {err}</h1>'
+    return jsonify(cd)
+
+
 if __name__ == '__main__':
-    #todo:do cd calculation
-    app.run(debug=True)
+    # todo:do cd calculation
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

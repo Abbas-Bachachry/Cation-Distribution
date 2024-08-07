@@ -1,5 +1,3 @@
-let formDataList = [];
-
 function toggleColumn(checkbox, columnName) {
     const inputs = document.querySelectorAll(`input[name^="${columnName}"]`);
     if (checkbox.checked) {

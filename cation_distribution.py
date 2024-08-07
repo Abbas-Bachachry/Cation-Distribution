@@ -172,15 +172,57 @@ class CD:
     def check_conditions(self):
         n = self.e_number
         c_check = True
+
+        # check the mass conservation law
+        # check if content of each element in calculated/guessed cations_content is the same as provided element content
         for i in range(self.e_number):
             element_indexes = [2 * i, 2 * i + 1, 2 * (i + n), 2 * (i + n) + 1]
             cation_content = self.cations_content[element_indexes]
             c_check = c_check and self.e_content[i] == np.round(np.sum(cation_content), 3)
 
+        # check the charge conservation principle
         q_check = round(self.cations_content @ self.q, self.precision + 1) == 8
+        # check the content in site A, it should be 1
         a_check = round(self.cations_content @ self.a, self.precision + 1) == 1
+        # check the content in site B, it should be 2
         b_check = round(self.cations_content @ self.b, self.precision + 1) == 2
         return c_check and q_check and a_check and b_check
+
+    def check_conditions_v2(self):  # todo: use this method
+        n = self.e_number
+        c_check = True
+        error_messages = []
+
+        # Check the mass conservation law
+        for i in range(self.e_number):
+            element_indexes = [2 * i, 2 * i + 1, 2 * (i + n), 2 * (i + n) + 1]
+            cation_content = self.cations_content[element_indexes]
+            if self.e_content[i] != np.round(np.sum(cation_content), 3):
+                c_check = False
+                error_messages.append(
+                    f"Mass conservation law failed for element {i}. Expected {self.e_content[i]}, got {np.round(np.sum(cation_content), 3)}.")
+
+        # Check the charge conservation principle
+        q_check = round(self.cations_content @ self.q, self.precision + 1) == 8
+        if not q_check:
+            error_messages.append("Charge conservation principle failed. Expected total charge to be 8.")
+
+        # Check the content in site A, it should be 1
+        a_check = round(self.cations_content @ self.a, self.precision + 1) == 1
+        if not a_check:
+            error_messages.append("Content in site A failed. Expected content to be 1.")
+
+        # Check the content in site B, it should be 2
+        b_check = round(self.cations_content @ self.b, self.precision + 1) == 2
+        if not b_check:
+            error_messages.append("Content in site B failed. Expected content to be 2.")
+
+        success = c_check and q_check and a_check and b_check
+        error_message = "\n".join(error_messages) if error_messages else ""
+        return success, error_message
+
+    def calculate_magnetic_moment(self, m, w):
+        return m * np.sum(self.e_content * w) / 5585
 
     def __str__(self):
         site_a = np.where(self.a)[0]
