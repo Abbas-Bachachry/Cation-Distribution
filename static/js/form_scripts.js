@@ -32,3 +32,10 @@ function validateForm() {
     enableDisabledInputs();
     return true;
 }
+
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const columnName = this.name.replace('oxidation', '');
+        toggleColumn(this, columnName);
+    });
+});

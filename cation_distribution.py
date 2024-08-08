@@ -73,7 +73,9 @@ class CD:
     def __initial_guss__(self, guss):
         guss = np.array(guss)
         self.cations_content = guss
-        assert self.check_conditions(), f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
+        success, error_message = self.check_conditions_v2()
+        # assert self.check_conditions(), f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
+        assert success, error_message
         self.a_capacity = 0
         self.b_capacity = 0
         mue = self.calculate_mue()
@@ -107,9 +109,11 @@ class CD:
                         break
         self.a_capacity = round(self.a_capacity, self.precision + 1)
         self.b_capacity = round(self.b_capacity, self.precision + 1)
+        success, error_message = self.check_conditions_v2()
         assert self.a_capacity == 0, f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
         assert self.b_capacity == 0, f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
-        assert self.check_conditions(), f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
+        # assert self.check_conditions(), f"somthing went wrong!\ninitial cation distribution: {self.cations_content}"
+        assert success, error_message
 
         mue = self.calculate_mue()
         massage = f"the cation distribution initiated with moment of {mue} \u03BCB.\n" \
@@ -127,7 +131,9 @@ class CD:
         else:
             self.cations_content = find_dist(self.cations_content, self.mue, moment, self.radii, a_exp, self.Ro,
                                              maxitiration=maxitiration, tol=tol)
-        assert self.check_conditions(), f"somthing went wrong!\ncation distribution: {self.cations_content}"
+        # assert self.check_conditions(), f"somthing went wrong!\ncation distribution: {self.cations_content}"
+        success, error_message = self.check_conditions_v2()
+        assert success, error_message
 
     def calculate_mue(self):
         site_a = np.where(self.a)[0]
@@ -222,7 +228,7 @@ class CD:
         return success, error_message
 
     def calculate_magnetic_moment(self, m, w):
-        return m * np.sum(self.e_content * w) / 5585
+        return m * (np.sum(self.e_content * w) + 4 * 16) / 5585
 
     def __str__(self):
         site_a = np.where(self.a)[0]

@@ -40,7 +40,7 @@ def init(e_num, u, r, *, var: list[bool] | None = None, delta=0.01, prec=None):
     remove_files_from_temp()
 
     if not os.path.exists('Data/Temp'):
-        pass  # todo: add Data/Temp folder creator
+        os.mkdir('Data/Temp')
 
     # Write the value of delta to a file
     with open('Data/Temp/delta', 'w') as delta_file:
