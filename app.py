@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, f
 from flask_socketio import SocketIO
 import threading
 from utils import get_cd_list, check_input, get_data, calculate_cd, delete_cd_list_file
+from output import save
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SECRET'
@@ -56,9 +57,8 @@ def index():
         except AssertionError as e:
             error = f'Invalid input. {e}'
 
-    print(cd_list)
     enumerated_cd_list = list(enumerate(cd_list))
-    return render_template("index.html", error=error, enumerated_cd_list=enumerated_cd_list)
+    return render_template("index.html", error=error, enumerate=enumerate, enumerated_cd_list=enumerated_cd_list)
 
 
 @app.route('/Chem=<results>')
@@ -93,7 +93,20 @@ def output(i):
 
 @app.route('/results')
 def result_table():
-    return 'results'
+    return render_template('output.html', enumerate=enumerate, output=cd_list)
+
+
+@app.route('/save_table', methods=['POST'])
+def save_table():
+    data = request.json
+    file_type = data.get('type', 'html')  # Default to HTML if type is not provided
+
+    try:
+        save(cd_list, type_=file_type)
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"success": False, "error": str(e)})
 
 
 if __name__ == '__main__':

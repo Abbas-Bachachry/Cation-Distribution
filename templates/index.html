@@ -11,18 +11,63 @@
 <body>
 <div id="alert-container"></div>
 <div class="container" id="storedDataContainer">
-    <h2>Stored Data</h2>
     {% for message in get_flashed_messages() %}
     {{message}}
     {% endfor %}
-    {% if enumerated_cd_list %}
-    {% for i, data in enumerated_cd_list %}
-    <div class="form-row">
-        <label><b><a href="{{ url_for('output', i=i) }}">{{data.label|safe}}</a></b></label>
-        {{data}}
+    <div class="table-container">
+        {% if enumerated_cd_list %}
+        {% for i, data in enumerated_cd_list %}
+        <table class="caption-table">
+            <caption><a href="{{ url_for('output', i=i) }}">{{data.label|safe}}</a></caption>
+            <tr>
+                <td>A site</td>
+                <td>
+                    [{% for j, a in enumerate(data.site_a) %}
+                    {% if a %}
+                    {{data.names[j//4]}}
+                    <sup>
+                        {% if j%2 %}
+                        3+
+                        {% else %}
+                        2+
+                        {% endif %}
+                    </sup>
+                    <sub>{{a}}</sub>
+                    {% endif %}
+                    {% endfor %}]
+                </td>
+            </tr>
+            <tr>
+                <td>B site</td>
+                <td>
+                    ({% for j, b in enumerate(data.site_b) %}
+                    {% if b %}
+                    {{data.names[j//2]}}
+                    <sup>
+                        {% if j%2 %}
+                        3+
+                        {% else %}
+                        2+
+                        {% endif %}
+                    </sup>
+                    <sub>{{b}}</sub>
+                    {% endif %}
+                    {% endfor %})
+                </td>
+            </tr>
+            <tr>
+                <td>n<sub>B</sub><sup>th</sup></td>
+                <td>{{data.mue_th}}</td>
+            </tr>
+            <tr>
+                <td>a<sub>th</sub></td>
+                <td>{{data.a_th}}</td>
+            </tr>
+        </table>
+        {% endfor %}
     </div>
-    {% endfor %}
-    <div class="form-group"><input type="button" value="summarize" onclick=location.href="{{ url_for('result_table') }}">
+    <div class="form-group">
+        <input type="button" class="btn-blue" value="summarize" onclick=location.href="{{ url_for('result_table')}}">
     </div>
     {% endif %}
 </div>

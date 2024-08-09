@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <title>Cation Distribution</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/output_styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-<div class="row">
+<div class="container">
     <div class="column">
-        <table>
+        <table class="caption-table bordered-table">
             <caption class="left_aligned_text">Cation distribution</caption>
             <tr>
                 <th>Label</th>
@@ -16,27 +16,85 @@
             </tr>
             {% for data in output %}
             <tr>
-                <td>{{ data.label }}</td>
+                <td>{{ data.label|safe }}</td>
                 <td>
-                    {% for site in data.SiteA %}
-                        [{{ site }}]
-                    {% endfor %}
+                    [{% for j, a in enumerate(data.site_a) %}
+                    {% if a %}
+                    {{data.names[j//4]}}
+                    <sup>
+                        {% if j%2 %}
+                        3+
+                        {% else %}
+                        2+
+                        {% endif %}
+                    </sup>
+                    <sub>{{a}}</sub>
+                    {% endif %}
+                    {% endfor %}]
                 </td>
                 <td>
-                    {% for site in data.SiteB %}
-                        ({{ site }})
-                    {% endfor %}
+                    ({% for j, b in enumerate(data.site_b) %}
+                    {% if b %}
+                    {{data.names[j//2]}}
+                    <sup>
+                        {% if j%2 %}
+                        3+
+                        {% else %}
+                        2+
+                        {% endif %}
+                    </sup>
+                    <sub>{{b}}</sub>
+                    {% endif %}
+                    {% endfor %})
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
     <div class="column">
-        <div class="row">theoretical a: {{ output[0].a_th }}</div>
-        <div class="row">experimental a: {{ output[0].n_B_exp }}</div>
-        <div class="row">theoretical mue: {{ output[0].n_B_th }}</div>
-        <div class="row">experimental mue: {{ output[0].n_B_exp }}</div>
+        <div class="row">
+            <div class="column">
+                <label for="fileType">Save as:</label>
+                <select id="fileType">
+                    <option value="html">HTML</option>
+                    <option value="pdf">PDF</option>
+                    <option value="docx">Word</option>
+                    <option value="xlsx">Excel</option>
+                </select>
+            </div>
+            <div class="column"><input type="button" onclick="saveTable()" value="Save"></div>
+        </div>
+        <div class="row" id="message"></div>
     </div>
 </div>
+<script>
+function saveTable() {
+    const fileType = document.getElementById('fileType').value;
+
+    fetch('/save_table', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: fileType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('message');
+        if (data.success) {
+            messageDiv.innerHTML = '<p style="color: green;">Table saved successfully as ' + fileType.toUpperCase() + '!</p>';
+        } else {
+            messageDiv.innerHTML = '<p style="color: red;">Error saving the table: ' + data.error + '</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const messageDiv = document.getElementById('message');
+        messageDiv.innerHTML = '<p style="color: red;">An error occurred while saving the table.</p>';
+    });
+}
+</script>
+
+
 </body>
 </html>

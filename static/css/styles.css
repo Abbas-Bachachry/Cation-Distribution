@@ -10,6 +10,118 @@ body {
     overflow-y: auto;
 }
 
+.table-container {
+    height: 630px;
+    background: #eeffee;
+    padding: 0 20px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    margin: -5px 15px 5px 15px;
+    overflow: auto;
+    position: relative;
+    display: inline-block;
+}
+
+.table-container-2 {
+    background: #eeffee;
+    padding: 0 20px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    margin: -5px 15px 5px 15px;
+}
+
+.caption-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 16px;
+    background-color: white;
+}
+
+.caption-table caption {
+    font-size: 1.5em;
+    margin: 10px 0;
+    color: #333;
+    text-align: left;
+}
+
+.caption-table a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s, text-shadow 0.3s;
+}
+
+
+.caption-table a:hover {
+    color: #0056b3;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.caption-table a:active {
+    color: #004085;
+    transform: scale(0.98);
+}
+
+.caption-table sub {
+    position: relative;
+    bottom: -0.5em;
+}
+
+.caption-table sup {
+    position: absolute;
+}
+
+.caption-table th,
+.caption-table td {
+    padding: 5px;
+    text-align: left;
+}
+
+.caption-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.caption-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.caption-table tr:hover {
+    background-color: #eaeaea;
+}
+
+
+
+.bordered-table {
+    border: 1px solid #333333;
+}
+
+.bordered-table th,
+.bordered-table td {
+    border: 1px solid #004085;
+}
+
+.bordered-table td {
+    border-bottom: 1px solid #ddd;
+    font-size: 20px;
+}
+
+.caption-table sub,
+.caption-table sup {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.bordered-table th {
+    background-color: green;
+}
+
 .container {
     background: #ffffff;
     padding: 20px;
@@ -85,6 +197,14 @@ h1 {
     margin: 5px 0;
 }
 
+.form-group button:hover {
+    opacity: 0.9;
+}
+
+.form-group button:active {
+    transform: scale(0.95);
+}
+
 .form-row {
     display: flex;
     flex-wrap: wrap;
@@ -148,6 +268,16 @@ h1 {
     flex: 1;
     margin-right: -14%;
     margin-top: 5px;
+}
+
+.btn-blue {
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+}
+
+.btn-blue:hover {
+    background-color: #0056b3;
 }
 
 /* Responsive design */
