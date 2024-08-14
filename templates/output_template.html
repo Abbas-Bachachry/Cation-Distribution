@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cation Distribution</title>
+    <style>
+    {{ style }}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="column">
+        <table class="caption-table bordered-table">
+            <caption class="left_aligned_text">Cation Distribution</caption>
+            <tr>
+                <th>Label</th>
+                <th>A site</th>
+                <th>B site</th>
+            </tr>
+            {% for data in cd_list %}
+            <tr>
+                <td>{{ data.label }}</td>
+                <td>[{% for a in data.site_a %}{% if a %}{{ data.e_name[loop.index0 // 4] }}<sup>{{ '3+' if loop.index0 % 2 == 1 else '2+' }}</sup><sub>{{ a }}</sub>{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}]</td>
+                <td>({% for b in data.site_b %}{% if b %}{{ data.e_name[loop.index0 // 2] }}<sup>{{ '3+' if loop.index0 % 2 == 1 else '2+' }}</sup><sub>{{ b }}</sub>{% if not loop.last %}, {% endif %}{% endif %}{% endfor %})</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="container">
+    <div class="column">
+        <table class="caption-table bordered-table">
+            <caption class="left_aligned_text">Magnetic and Structural Parameters</caption>
+            <tr>
+                <th>Label</th>
+                <th>a<sub>exp</sub></th>
+                <th>a<sub>th</sub></th>
+                <th>n<sub>B</sub><sup>exp</sup></th>
+                <th>n<sub>B</sub><sup>th</sup></th>
+            </tr>
+            {% for data in cd_list %}
+            <tr>
+                <td>{{ data.label }}</td>
+                <td>{{ data.a_exp }}</td>
+                <td>{{ data.a_th }}</td>
+                <td>{{ data.mue_exp }}</td>
+                <td>{{ data.mue_th }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>

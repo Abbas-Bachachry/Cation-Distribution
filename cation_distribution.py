@@ -142,6 +142,7 @@ class CD:
         mue_b = np.sum((self.mue * self.cations_content)[site_b])
         mue = mue_b - mue_a
         if self.precision:
+            print("precision:", self.precision)
             mue = np.round(mue, self.precision)
         return mue
 
@@ -228,7 +229,10 @@ class CD:
         return success, error_message
 
     def calculate_magnetic_moment(self, m, w):
-        return m * (np.sum(self.e_content * w) + 4 * 16) / 5585
+        mu = m * (np.sum(self.e_content * w) + 4 * 16) / 5585
+        if self.precision:
+            mu = np.round(mu, self.precision)
+        return mu
 
     def __str__(self):
         site_a = np.where(self.a)[0]
